@@ -5,12 +5,12 @@
   "main": "app/index.jss",
   "homepage": "https://milaveliz.github.io/banco_de_curriculos",
   "scripts": {
-    "build": "microbundle-crl --no-compress --format modern,cjs",
+    "build": "yarn start && node app/index.js",
     "start": "microbundle-crl watch --no-compress --format modern,cjs node app/index.js",
     "prepare": "run-s build",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "predeploy": "cd banco_de_curriculos && yarn install && yarn run build",
-    "deploy": "gh-pages -d banco_de_curriculos/build"
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -d build"
   },
   "keywords": [
     "nodejs",

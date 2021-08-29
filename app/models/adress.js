@@ -32,7 +32,7 @@ cep: {
   }
 });
 
-Adress.belongsTo(User, { foreignKey: 'owner_id' });
-User.hasOne(Adress, { foreignKey: 'owner_id' });
+// Adress.belongsTo(User, { foreignKey: 'owner_id' });
+// User.hasOne(Adress, { foreignKey: 'owner_id' });
 
 module.exports = Adress;

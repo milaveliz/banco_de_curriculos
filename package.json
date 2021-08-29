@@ -35,7 +35,7 @@
     "sequelize": "^6.6.5"
   },
   "engines": {
-    "node": "14.17.1"
+    "node": "14.17.5"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",

@@ -51,8 +51,8 @@ const Cep = () => {
 
         const response = await axios
             .post("http://localhost:8080/api/v1/register", data)
-            .catch((err) => {
-                if (err && err.response) setError(err.response.data.message);
+            .catch((erro) => {
+                if (erro && erro.response) setError(erro.response.data.message);
                 setSuccess(null);
             });
 

@@ -1,60 +1,30 @@
 {
   "name": "banco_de_curriculos",
   "version": "1.0.0",
-  "description": "Node.js Rest Apis with Express, Sequelize & MySQL",
+  "private": true,
+  "description": "React + Node.js Rest Apis with Express, Sequelize & MySQL",
   "main": "app/index.jss",
-  "homepage": "https://milaveliz.github.io/banco_de_curriculos",
   "scripts": {
-    "build": "yarn start && node app/index.js",
-    "start": "microbundle-crl watch --no-compress --format modern,cjs node app/index.js",
-    "prepare": "run-s build",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "client": "yarn workspace client start",
+    "server": "yarn workspace server start",
+    "start": "concurrently --kill-others-on-fail \"yarn server\"  \"yarn client\"",
     "predeploy": "yarn run build",
-    "deploy": "gh-pages -d build"
-  },
-  "keywords": [
-    "nodejs",
-    "express",
-    "rest",
-    "api",
-    "sequelize",
-    "mysql"
-  ],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "body-parser": "^1.19.0",
-    "cep-promise": "^4.1.1",
-    "cors": "^2.8.5",
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "helmet": "^4.6.0",
-    "morgan": "^1.10.0",
-    "mysql2": "^2.3.0",
-    "react-input-mask": "^2.0.4",
-    "sequelize": "^6.6.5"
+    "deploy": "gh-pages -d build",
+    "swagger-autogen": "node swagger.js"
   },
   "engines": {
     "node": "14.17.5"
   },
+  "workspaces": [
+    "package/*"
+  ],
+  "dependencies": {
+    "concurrently": "^6.2.1",
+    "express": "^4.17.1",
+    "swagger-autogen": "^2.6.3",
+    "swagger-ui-express": "^4.1.4"
+  },
   "devDependencies": {
-    "@types/jest": "^27.0.1",
-    "@types/lodash": "^4.14.172",
-    "@types/node": "^16.7.5",
-    "@types/react": "^17.0.19",
-    "@types/react-dom": "^17.0.9",
-    "@types/react-input-mask": "^3.0.1",
-    "@typescript-eslint/eslint-plugin": "^4.29.3",
-    "@typescript-eslint/parser": "^4.29.3",
-    "babel-eslint": "^10.1.0",
-    "cross-env": "^7.0.3",
-    "gh-pages": "^3.2.3",
-    "microbundle-crl": "^0.13.11",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^2.3.2",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "^4.0.3",
-    "typescript": "^4.4.2"
+    "swagger-autogen": "^2.11.2"
   }
 }

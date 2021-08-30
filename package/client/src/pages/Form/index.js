@@ -77,7 +77,7 @@ export default function Form(props) {
     const { ...data } = values;
 
     const response = await axios
-      .post("http://localhost:8080/api/v1/register", data)
+      .post("http://localhost:3000/api/v1/register", data)
       .catch((err) => {
         if (err && err.response) setError(err.response.data.message);
         setSuccess(null);

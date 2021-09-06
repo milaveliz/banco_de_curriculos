@@ -1,23 +1,18 @@
 import styled from 'styled-components';
 import pencil_1 from '../../img/pencil_1.jpg'
 
-
 export const HomeContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  /* justify-content: center; */
-  /* height: 100vh;
-  width: 100vw; */
+  background-color: #000;
 `;
 
 export const Content = styled.div`
-  /* width: 100vw; */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
 `;
 
 export const Image = styled.div`
@@ -28,41 +23,30 @@ export const Image = styled.div`
   background-repeat: no-repeat;
   background-position: center;
   justify-content: right;
-
-
 `;
 
-export const Input = styled.input`
-  border: 1px solid #ddd;
-  height: 1.5rem;
-  padding: 0 .5rem;
-  border-radius: .25rem 0 0 .25rem;
-
-  &:focus,
-  &:active {
-    outline: none;
-    box-shadow: none;
-  }
+export const Paragrafo = styled.p`
+  width: 70%;
+  padding: 1rem;
+  margin-left: 5rem;
+  margin-right: 5rem;
+  text-align: justify;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
 `;
 
 export const Button = styled.button`
-  height: 1.5rem;
-  border: 1px solid #000;
+  height: 2rem;
+  border: 3px solid #fff;
   background: #000;
   color: #fff;
-  border-radius: 0 .25rem .25rem 0;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  margin-top: 1rem;
 
-  &:focus,
-  &:active {
-    outline: none;
-    box-shadow: none;
+  &:hover {
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
   }
 `;
-
-export const ErrorMsg = styled.span`
-  display: block;
-  font-size: 0.65rem;
-  color: red;
-  font-weight: 600;
-  margin-top: 1rem;
-`

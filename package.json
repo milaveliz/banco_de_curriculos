@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "React + Node.js Rest Apis with Express, Sequelize & MySQL",
-  "main": "app/index.jss",
+  "main": "app/index.js",
   "scripts": {
     "client": "yarn workspace client start",
     "server": "yarn workspace server start",
@@ -21,10 +21,7 @@
   "dependencies": {
     "concurrently": "^6.2.1",
     "express": "^4.17.1",
-    "swagger-autogen": "^2.6.3",
+    "swagger-autogen": "^2.11.1",
     "swagger-ui-express": "^4.1.4"
-  },
-  "devDependencies": {
-    "swagger-autogen": "^2.11.2"
   }
 }

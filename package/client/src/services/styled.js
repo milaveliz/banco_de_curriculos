@@ -10,7 +10,7 @@ export const Container = styled.div`
   max-width: 991px; */
   /* margin: 0 auto; */
   /* background-color: #555; */
-`
+`;
 
 export const Content = styled.div`
   /* width: 100vw; */
@@ -18,7 +18,6 @@ export const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
 `;
 
 export const Image = styled.div`
@@ -29,8 +28,6 @@ export const Image = styled.div`
   background-repeat: no-repeat;
   background-position: center;
   justify-content: right;
-
-
 `;
 
 export const Title = styled.h1`
@@ -38,7 +35,7 @@ export const Title = styled.h1`
   font-size: 2rem;
   font-family: sans-serif;
   color: #333;
-`
+`;
 
 export const List = styled.ul`
   list-style: none;

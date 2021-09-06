@@ -1,4 +1,3 @@
-import React from 'react';
 import * as S from './styled';
 import { useHistory } from 'react-router-dom';
 
@@ -16,10 +15,12 @@ export default function Home() {
       </S.Content>
       
       <S.Content>
-        <p>Somos a JobsNET, uma empresa especialista em recrutamento e seleção de profissionais nas mais diversas áreas!</p>
-        <p>Queremos conectar os proffisionais à sonhada oportuidade de emprego.</p>
-        <p>Para isso é muio fácil, você só precisa se cadastrar!</p>
-        <S.Button type="button" onClick={handleClick}>Cadastre seu currículo!</S.Button>
+        <S.Paragrafo>Somos a JobsNET, uma empresa especialista em recrutamento e seleção de profissionais nas mais diversas áreas!</S.Paragrafo>
+        <S.Paragrafo>Queremos conectar os proffisionais à sonhada oportuidade de emprego.</S.Paragrafo>
+        <S.Paragrafo>Para isso é muio fácil, você só precisa se cadastrar!</S.Paragrafo>
+        <S.Button type="button" onClick={handleClick}>
+          Cadastre seu currículo!
+        </S.Button>
       </S.Content>
     </S.HomeContainer>
   );

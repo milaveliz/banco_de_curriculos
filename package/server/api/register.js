@@ -1,6 +1,5 @@
 const express = require('express');
 const User = require('../models/user');
-const Adress = require('../models/adress');
 
 const router = express.Router();
 
@@ -19,13 +18,12 @@ router.post('/register', async (req, res) => {
     cpf,
     car,
     licence,
-    adress:
-      cep,
-      street,
-      neighborhood,
-      address_number,
-      city,
-      state,
+    cep,
+    rua,
+    bairro,
+    cidade,
+    estado,
+    numero, 
   } = req.body;
 
   const alreadyExistsUser = await User.findOne({ where: { email } }).catch(
@@ -63,18 +61,18 @@ router.post('/register', async (req, res) => {
     cpf,
     car,
     licence,
-    adress:
-      cep,
-      street,
-      neighborhood,
-      address_number,
-      city,
-      state,
+    cep,
+    rua,
+    bairro,
+    cidade,
+    estado,
+    numero, 
   });
 
   const savedUser = await newUser.save().catch((err) => {
     console.log('Error: ', err);
-    res.status(500).json({ error: 'Não foi possível completar o sue registro no momento!' });
+    res.status(500).json({ error: 'Não foi possível completar o seu registro no momento!' });
+    res.status(500).json({ error: {err} });
   });
 
   if (savedUser) {

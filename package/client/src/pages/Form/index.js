@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import  { useState } from 'react';
 import * as S from './styled';
-import { Field, useFormik } from 'formik';
+import { useFormik } from 'formik';
 import InputMask from "react-input-mask";
 import Select from 'react-select';
-import api from '../../services/api'
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import axios from 'axios';
-import * as yup from "yup";
-import Cep from '../../services/cep.tsx'
-// import ReactCepPromise, { IOnResult } from 'react-cep-promise'
+import * as Yup from "yup";
 
 
 const maritalStatus = [
@@ -36,33 +33,121 @@ const licence = [
   { value: 'nao_possuo', label: 'não possuo' },
 ];
 
-const validationSchema = yup.object({
-  name: yup
+const customStyles = {
+  control: () => ({
+    border: `3px solid #ccc`,
+    height: `1.5rem`,
+    padding: `0.5rem`,
+    borderRadius: `0.25rem`,
+    width: `100%`,
+    backgroundColor: `#000`,
+    color: `#aaaa`,
+    fontSize: `1rem`,
+    fontWeight: `bold`,
+    display: 'flex',
+    marginBottom: `1rem`,
+    cursor: "pointer",
+  }),
+
+  option: (provided, state) => ({
+      ...provided,
+    borderBottom: `1px dotted`,
+    width: `100%`,
+    color: state.isSelected ? "#aaaa" : "#000",
+    fontSize: `1rem`,
+    backgroundColor: state.isSelected ? "#eee" : "#fff",
+      cursor: "pointer",
+      marginTop: `0.25rem`,
+
+  //     dropdownIndicator: base => ({
+  //   ...base,
+  //   display: "none"
+  // }),
+  // indicatorSeparator: base => ({
+  //   ...base,
+  //   display: "none"
+  // }),
+  // valueContainer: base => ({
+  //   ...base,
+  //   padding: 0,
+  //   paddingLeft: 2
+  // })
+  }),
+
+  // option: (provided, state) => ({
+  //   ...provided,
+  //   borderBottom: "1px dotted",
+  //   color: state.isSelected ? "grey" : "#000",
+  //   fontSize: `1rem`,
+  //   backgroundColor: state.isSelected ? "#eee" : "#fff",
+  //   textAlign: "left",
+  //   cursor: "pointer",
+  //   width: "100%"
+  // }),
+
+  // container: base => ({
+  //   ...base,
+  //   width: "100%"
+  // }),
+
+  // control: base => ({
+  //   ...base,
+  //   height: `1rem`,
+  //   border: `3px solid #ccc`,
+  //   fontSize: `1rem`,
+  //   fontWeight: `bold`,
+  //   borderRadius: `0.25rem`,
+  //   width: `100%`,
+  //   textAlign: `left`,
+  //   backgroundColor: `#000`,
+  //   marginBottom: `1rem`,
+  // }),
+
+  // dropdownIndicator: base => ({
+  //   ...base,
+  //   display: "none"
+  // }),
+  // indicatorSeparator: base => ({
+  //   ...base,
+  //   display: "none"
+  // }),
+  // valueContainer: base => ({
+  //   ...base,
+  //   padding: 0,
+  //   paddingLeft: 2
+  // })
+}
+
+const validationSchema = Yup.object().shape({
+  name: Yup
     .string()
     .min(3, "Digite seu nome completo!")
     .required("Digite seu nome completo!"),
-  intendedPosition: yup
+  intendedPosition: Yup
     .string()
-    .min(3, "Digite sua profissão!")
+    .min(4, "Digite sua profissão!")
     .required("Digite sua profissão!"),
-  birthDate: yup
-    // .string()
+  birthDate: Yup
     .date()
+    .max(new Date(Date.now() - 567648000000), "Você precisa ter pelo menos 18 anos!")
     .required("Selecione a sua data de nascimento!"),
-  email: yup
+  email: Yup
     .string()
     .email("Digite um email válido")
     .required("Digite um email válido"),
-  phone1: yup
+  phone1: Yup
     .string()
     .required("Digite o número do seu celular!"),
-  cpf: yup
+  cpf: Yup
     .string()
     .required("Digite seu CPF!"),
-  // address_number: yup
-  //   .string()
-  //   .min(1, "Digite o número!")
-  //   .required("Digite o número!"),
+  cep: Yup
+    .string()
+    .required("Digite seu CEP!"),
+  numero: Yup
+    .string()
+    .min(1, "Digite o número!")
+    .required("Digite o número!"),
 });
 
 export default function Form(props) {
@@ -71,27 +156,22 @@ export default function Form(props) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  // const onlyNumbers = (str) => str.replace(/[^0-9]/g, "");
-
   const onSubmit = async (values) => {
-    const { ...data } = values;
-
     const response = await axios
-      .post("http://localhost:3000/api/v1/register", data)
+      .post("http://localhost:3000/api/v1/register", values)
       .catch((err) => {
-        if (err && err.response) setError(err.response.data.message);
+        if (err && err.response) setError(err.response.values.message);
         setSuccess(null);
       });
 
     if (response && response.data) {
       setError(null);
       setSuccess(response.data.message);
-      formik.resetForm();
-      window.location = "cep";
+      window.location = "/";
     }
   };
 
-  const formik = useFormik({
+  const { touched, values, errors, handleChange, handleSubmit, setFieldValue, handleBlur } = useFormik({
     initialValues: {
       name: "",
       intendedPosition: "",
@@ -107,19 +187,17 @@ export default function Form(props) {
       cpf: "",
       car: "",
       licence: "",
-      // cep: "",
-      // street: "",
-      // neighborhood: "",
-      // address_number: "",
-      // city: "",
-      // state: "",
+      cep: "",
+      rua: "",
+      bairro: "",
+      cidade: "",
+      estado: "",
+      numero: "",
     },
     validateOnBlur: true,
-    onSubmit,
     validationSchema: validationSchema,
+    onSubmit,
   });
-
-  // console.log("Error", error);
 
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -136,30 +214,30 @@ export default function Form(props) {
       id: "documentos",
       title: "Documentos",
     },
-    // {
-    //   id: "endereco",
-    //   title: "Endereço",
-    // },
+    {
+      id: "endereco",
+      title: "Endereço",
+    },
   ]
 
   function handleNextStep() {
     switch (currentStep) {
       case 0:
-        if (formik.values.name.length === 0 || formik.values.birthDate === "") {
+        if (values.name.length === 0 || values.intendedPosition.length === 0 || values.birthDate === "") {
           alert("PREENCHA CORRETAMENTE OS CAMPOS OBRIGATÓRIOS!");
           break
         } else {
           return setCurrentStep((prevStep) => prevStep + 1);
         }
       case 1:
-        if (formik.values.email.length === 0 || formik.values.phone1 === 0) {
+        if (values.email.length === 0 || values.phone1 === 0) {
           alert("PREENCHA CORRETAMENTE OS CAMPOS OBRIGATÓRIOS!");
           break
         } else {
           return setCurrentStep((prevStep) => prevStep + 1);
         }
       case 2:
-        if (formik.values.cpf.length === 0) {
+        if (values.cpf.length === 0) {
           alert("PREENCHA CORRETAMENTE OS CAMPOS OBRIGATÓRIOS!");
           break
         } else {
@@ -174,14 +252,29 @@ export default function Form(props) {
     setCurrentStep((prevStep) => prevStep - 1);
   }
 
-  // const [fetching, setFetching] = 'false';
-  // const [cep, setCep] = '';
-  // const [city, setCity] = '';
-  // const [state, setState] = '';
-  // const [neighborhood, setNeighborhood] = '';
-  // const [street, setStreet] = '';
-  // < Cep />
+  function findCep(event) {
+    // event.PreventDefault();
 
+    const inputDoCep = document.querySelector("#cep");
+    const valorDoCep = inputDoCep.value;
+    const url = `https://viacep.com.br/ws/${valorDoCep}/json/`;
+
+    fetch(url).then(response => {
+      return response.json();
+    })
+      .then(data => {
+        if (data.erro) {
+          alert("O CEP DIGITADO ESTÁ INVÁLIDO");
+          return;
+        }
+        // atribuirCampos(data);
+
+        setFieldValue('rua', data.logradouro);
+        setFieldValue('bairro', data.bairro);
+        setFieldValue('cidade', data.localidade);
+        setFieldValue('estado', data.uf);
+      })
+  }
 
   return (
     <S.Container>
@@ -189,96 +282,73 @@ export default function Form(props) {
         <S.Image></S.Image>
       </S.Content>
 
-      {/* <S.Content>
-        <S.Title>Currículos</S.Title>
-        <S.List>
-          <S.ListItem>Currículo: </S.ListItem>
-        </S.List>
-        <S.LinkHome to="/">Enviar</S.LinkHome>
-      </S.Content> */}
-
-      <div>
+      <S.Content>
         <Toaster />
 
         {!error && <>{success ? success : ""}</>}
         {!success && <>{error ? error : ""}</>}
 
-        {/* <form onSubmit={savingInstitution}> */}
-        <form onSubmit={formik.handleSubmit} >
-
-          <h2>{steps[currentStep].title}</h2>
+        <S.Form onSubmit={handleSubmit}>
+          <S.H2>{steps[currentStep].title}</S.H2>
           <hr />
-          {/* <p>
+          <S.Paragrafo>
             {currentStep + 1} de {steps.length}
-          </p> */}
-
+          </S.Paragrafo>
           {steps[currentStep].id === "dados-pessoais" && (
             <div>
               <div>
                 <label htmlFor="name">Nome Completo:*</label>
-                <input
+                <S.Input
                   id="name"
                   name="name"
                   type="text"
-                  onChange={formik.handleChange}
-                  value={formik.values.name}
-                  onBlur={formik.handleBlur}
-                  required
+                  onChange={handleChange}
+                  value={values.name}
+                  onBlur={handleBlur}
                 />
-                {/* {formik.touched.name && formik.errors.name && (
-                  <span>{formik.errors.name}</span>
-                )} */}
-                <div>
-                  {formik.touched.name && formik.errors.name
-                    ? formik.errors.name
-                    : ""}
-                </div>
+                {errors.name && touched.name ? (
+                  <S.Alert>{errors.name}</S.Alert>
+                ) : null}
               </div>
               <div>
                 <label htmlFor="intendedPosition">Cargo Pretendido ou Pofissão:*</label>
-                <input
+                <S.Input
                   id="intendedPosition"
                   name="intendedPosition"
                   type="text"
-                  onChange={formik.handleChange}
-                  value={formik.values.intendedPosition}
-                  onBlur={formik.handleBlur}
-                  required
+                  onChange={handleChange}
+                  value={values.intendedPosition}
+                  onBlur={handleBlur}
                 />
-              </div>
-              <div>
-                {formik.touched.intendedPosition && formik.errors.intendedPosition
-                  ? formik.errors.intendedPosition
-                  : ""}
+                {errors.intendedPosition && touched.intendedPosition ? (
+                  <S.Alert>{errors.intendedPosition}</S.Alert>
+                ) : null}
               </div>
               <div>
                 <label htmlFor="birthDate">Data Nascimento:*</label>
-                <InputMask
+                <S.Input
                   id="birthDate"
                   name="birthDate"
                   type="date"
-                  onChange={formik.handleChange}
-                  value={formik.values.birthDate}
-                  onBlur={formik.handleBlur}
-                  required
+                  onChange={handleChange}
+                  value={values.birthDate}
+                  onBlur={handleBlur}
                 />
-                <div>
-                  {formik.touched.birthDate && formik.errors.birthDate
-                    ? formik.errors.birthDate
-                    : ""}
-                </div>
+                {errors.birthDate && touched.birthDate ? (
+                  <S.Alert>{errors.birthDate}</S.Alert>
+                ) : null}
               </div>
+
               <div>
                 <label htmlFor="maritalStatus">Estado Civil:</label>
                 <Select
                   id="maritalStatus"
                   name="maritalStatus"
-                  // value={formik.values.maritalStatus}
                   defaultValue={selectedOption}
                   options={maritalStatus}
-                  // onChange={setSelectedOption}
+                  styles={customStyles}
                   onChange={selectedOption =>
-                    formik.setFieldValue("maritalStatus", selectedOption.value)
+                    setFieldValue("maritalStatus", selectedOption.value)
                   }
                 />
               </div>
@@ -287,12 +357,11 @@ export default function Form(props) {
                 <Select
                   id="sex"
                   name="sex"
-                  // value={formik.values.sex}
                   defaultValue={selectedOption}
                   options={sex}
-                  // onChange={setSelectedOption}
+                  styles={customStyles}
                   onChange={selectedOption =>
-                    formik.setFieldValue("sex", selectedOption.value)
+                    setFieldValue("sex", selectedOption.value)
                   }
                 />
               </div>
@@ -303,74 +372,92 @@ export default function Form(props) {
             <div>
               <div>
                 <label htmlFor="email">Email:*</label>
-                <input
+                <S.Input
                   id="email"
                   name="email"
                   type="email"
-                  value={formik.values.email}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  required
+                  value={values.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                 />
-                <div>
-                  {formik.touched.email && formik.errors.email
-                    ? formik.errors.email
-                    : ""}
-                </div>
+                {errors.email && touched.email ? (
+                  <S.Alert>{errors.email}</S.Alert>
+                ) : null}
               </div>
               <div>
                 <label htmlFor="phone1">Celular:*</label>
                 <InputMask
-                  id="phone1"
-                  name="phone1"
-                  type="tel"
-                  value={formik.values.phone1}
-                  onChange={formik.handleChange}
                   mask="(99) 9 9999-9999"
-                  onBlur={formik.handleBlur}
-                  required
-                />
-                <div>
-                  {formik.touched.phone1 && formik.errors.phone1
-                    ? formik.errors.phone1
-                    : ""}
-                </div>
+                  value={values.phone1}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  {(inputProps) => (
+                    <S.Input
+                      {...inputProps}
+                      id="phone1"
+                      name="phone1"
+                      type="tel"
+                    />
+                  )}
+                </InputMask>
+                {errors.phone1 && touched.phone1 ? (
+                  <S.Alert>{errors.phone1}</S.Alert>
+                ) : null}
               </div>
               <div>
                 <label htmlFor="phone2">Telefone Fixo 1:</label>
                 <InputMask
-                  id="phone2"
-                  name="phone2"
-                  type="tel"
-                  value={formik.values.phone2}
-                  onChange={formik.handleChange}
-                  mask="(99) 9999-9999"
-                  onBlur={formik.handleBlur}
-                />
+                  mask="(99) 9 9999-9999"
+                  value={values.phone2}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  {(inputProps) => (
+                    <S.Input
+                      {...inputProps}
+                      id="phone2"
+                      name="phone2"
+                      type="tel"
+                    />
+                  )}
+                </InputMask>
               </div>
               <div>
                 <label htmlFor="phone3">Telefone Fixo 2:</label>
                 <InputMask
-                  id="phone3"
-                  name="phone3"
-                  type="tel"
-                  value={formik.values.phone3}
-                  onChange={formik.handleChange}
-                  mask="(99) 9999-9999"
-                  onBlur={formik.handleBlur}
-                />
+                  mask="(99) 9 9999-9999"
+                  value={values.phone3}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  {(inputProps) => (
+                    <S.Input
+                      {...inputProps}
+                      id="phone3"
+                      name="phone3"
+                      type="tel"
+                    />
+                  )}
+                </InputMask>
               </div>
               <div>
                 <label htmlFor="phone4">Contato:</label>
                 <InputMask
-                  id="phone4"
-                  name="phone4"
-                  type="tel"
-                  value={formik.values.phone4}
-                  onChange={formik.handleChange}
                   mask="(99) 9 9999-9999"
-                  onBlur={formik.handleBlur}
-                />
+                  value={values.phone4}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  {(inputProps) => (
+                    <S.Input
+                      {...inputProps}
+                      id="phone4"
+                      name="phone4"
+                      type="tel"
+                    />
+                  )}
+                </InputMask>
               </div>
             </div>
           )}
@@ -379,44 +466,48 @@ export default function Form(props) {
             <div>
               <div>
                 <label htmlFor="idCard">Identidade:</label>
-                <input
+                <S.Input
                   id="idCard"
                   name="idCard"
                   type="text"
-                  value={formik.values.idCard}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
+                  value={values.idCard}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                 />
               </div>
               <div>
                 <label htmlFor="cpf">CPF:*</label>
                 <InputMask
-                  id="cpf"
-                  name="cpf"
-                  type="text"
-                  value={formik.values.cpf}
-                  onChange={formik.handleChange}
                   mask="999.999.999-99"
-                  onBlur={formik.handleBlur}
-                  required
-                />
-                <div>
-                  {formik.touched.cpf && formik.errors.cpf
-                    ? formik.errors.cpf
-                    : ""}
-                </div>
+                  value={values.cpf}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  {(inputProps) => (
+                    <S.Input
+                      {...inputProps}
+                      id="cpf"
+                      name="cpf"
+                      type="text"
+
+                    />
+                  )}
+                </InputMask>
+                {errors.cpf && touched.cpf ? (
+                  <S.Alert>{errors.cpf}</S.Alert>
+                ) : null}
+
               </div>
               <div>
                 <label htmlFor="car">Possui Veículo?</label>
                 <Select
                   id="car"
                   name="car"
-                  // value={formik.values.car}
                   defaultValue={selectedOption}
                   options={car}
-                  // onChange={setSelectedOption}
+                  styles={customStyles}
                   onChange={selectedOption =>
-                    formik.setFieldValue("car", selectedOption.value)
+                    setFieldValue("car", selectedOption.value)
                   }
                 />
               </div>
@@ -425,49 +516,128 @@ export default function Form(props) {
                 <Select
                   id="licence"
                   name="licence"
-                  // value={formik.values.licence}
                   defaultValue={selectedOption}
                   options={licence}
-                  // onChange={setSelectedOption}
+                  styles={customStyles}
                   onChange={selectedOption =>
-                    formik.setFieldValue("licence", selectedOption.value)
+                    setFieldValue("licence", selectedOption.value)
                   }
                 />
               </div>
             </div>
           )}
 
-          <div>
+          {steps[currentStep].id === "endereco" && (
+            <div>
+              <div>
+                <label htmlFor="cep">CEP:*</label>
+                <InputMask
+                  mask="99999-999"
+                  value={values.cep}
+                  onChange={handleChange}
+                  onBlur={(valor) => findCep(valor)}
+                >
+                  {(inputProps) => (
+                    <S.Input
+                      {...inputProps}
+                      id="cep"
+                      name="cep"
+                      type="text"
+                    />
+                  )}
+                </InputMask>
+                {errors.cep && touched.cep ? (
+                  <S.Alert>{errors.cep}</S.Alert>
+                ) : null}
+              </div>
+              <div>
+                <label htmlFor="cidade">Cidade</label>
+                <S.Input
+                  id="cidade"
+                  name="cidade"
+                  type="text"
+                  value={values.cidade}
+                  onBlur={handleBlur}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="estado">Estado</label>
+                <S.Input
+                  id="estado"
+                  type="text"
+                  name="estado"
+                  value={values.estado}
+                  onBlur={handleBlur}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="bairro">Bairro</label>
+                <S.Input
+                  id="bairro"
+                  type="text"
+                  value={values.bairro}
+                  name="bairro"
+                  onBlur={handleBlur}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="rua">Rua</label>
+                <S.Input
+                  id="rua"
+                  type="text"
+                  value={values.rua}
+                  name="rua"
+                  onBlur={handleBlur}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="numero">Número:*</label>
+                <S.Input
+                  id="numero"
+                  name="numero"
+                  type="text"
+                  value={values.numero}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                {errors.numero && touched.numero ? (
+                  <S.Alert>{errors.numero}</S.Alert>
+                ) : null}
+              </div>
+            </div>
+          )}
+
+          <S.GroupButton>
             {currentStep > 0 && (
-              <button
+              <S.Button
                 type="button"
                 onClick={handlePreviousStep}
               >
                 Voltar
-              </button>
+              </S.Button>
             )}
-
             {currentStep < steps.length - 1 && (
-              <button
+              <S.Button
                 type="button"
                 onClick={handleNextStep}
               >
                 Próximo
-              </button>
+              </S.Button>
             )}
-
             {currentStep === steps.length - 1 && (
               <div>
-              <button type="submit" >
-                Próximo
-              </button>
-            </div>
+                <S.Button type="submit">
+                  Cadastrar
+                </S.Button>
+              </div>
             )}
-          </div>
-
-        </form>
-      </div>
-
+          </S.GroupButton>
+        </S.Form>
+      </S.Content>
     </S.Container>
   )
 }
